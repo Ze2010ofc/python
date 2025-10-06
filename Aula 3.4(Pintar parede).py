@@ -1,0 +1,5 @@
+alt = int(input("Diz a altura(em metros) da parede que pretendes pintar."))
+larg = int(input("Diz a largura(em metros) da parede que pretendes pintar."))
+a =(alt*larg)
+t =(a/2)
+print(f'"Para pintares a parede(de {a} m2, precisas de {t} litros de tinta."')

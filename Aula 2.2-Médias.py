@@ -1,0 +1,5 @@
+nome = input("Qual o teu nome?")
+a = int(input("Qual a tua primeira nota?"))
+b = int(input("Qual a tua segunda nota?"))
+media =((a+b)/2)
+print(f'"A média do{nome} é {media}."')

@@ -1,0 +1,5 @@
+nome = input("Qual o seu nome?")
+sm = int(input("Quanto você ganha por mês?"))
+hs = int(input("Quantas horas você trabalha por semana?"))
+sh =(sm/(hs*4))
+print(f'"Você,{nome}, ganha {sh} por hora."')

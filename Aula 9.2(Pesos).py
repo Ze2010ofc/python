@@ -1,10 +1,8 @@
-a = int(input("Insere um peso."))
-b = int(input("Insere um peso."))
-c = int(input("Insere um peso."))
-d = int(input("Insere um peso."))
-e = int(input("Insere um peso."))
+maior = 0
+menor = 0
 
-for x in range (5):
+for x in range (1,6):
+       x == 1
        input(x, end=' ')
 
-       exercicio incompleto
+incompleto

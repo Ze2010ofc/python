@@ -1,0 +1,115 @@
+Jogos e apps
+
+#Lança Foguete
+x = int(input("quantos segundos queres que o foguete espere até ser lançado?"))
+from time import sleep
+
+for y in range(0,x):
+    print(f'{x-y}')
+    sleep(1)
+print(f'O teu foguete foi lançado após {x} segundos.')
+
+#Cara ou coroa
+
+import random
+
+resultado = random.choice(["cara", "coroa"])
+print(resultado)
+
+
+#Pedra Papel ou Tesoura
+
+import random
+
+x = ["Pedra", "Papel", "Tesoura"]
+
+a = random.choice(x)
+
+b = int(input("Diz o teu ataque(1=Pedra, 2=Papel, 3=Tesoura)."))
+print(a)
+
+
+
+if b==1:
+    c="Pedra"
+elif b==2:
+    c="Papel"
+elif b==3:
+    c="Tesoura"
+
+
+if a==c:
+    print("Empate")
+elif a=="Papel" and c=="Pedra":
+    print("Perdeste")
+elif a=="Pedra" and c=="Tesoura":
+    print("Perdeste")
+elif a=="Tesoura" and c=="Papel":
+    print("Perdeste")
+elif c=="Papel" and a=="Pedra":
+    print("Ganhaste")
+elif c=="Pedra" and a=="Tesoura":
+    print("Ganhaste")
+elif c=="Tesoura" and a=="Papel":
+    print("Ganhaste")
+else:
+    print("Nenhuma opção")
+
+#Calculadora Simples
+
+x = int(input("Diz um número?"))
+y = int(input("Diz um número novamente?"))
+operação = input("Diz que operação desejas realizar?")
+
+lista_operações = ['soma', 'subtração', 'multiplicação', 'divisão']
+
+def soma(x, y):
+    print(x+y)
+
+def subtração(x, y):
+    print(x-y)
+
+def multiplicação(x, y):
+    print(x*y)
+
+def divisão(x, y):
+    print(x/y)
+
+if operação == "soma":
+    soma(x, y)
+elif operação == "subtração":
+    subtração(x, y)
+elif operação == "multiplicação":
+    multiplicação(x, y)
+elif operação == "divisão":
+    divisão(x, y)
+else:
+    print("Operação inválida ou inexistente!")
+
+#Sorteio Dados
+
+import random
+a = random.randint(1, 6)
+b = random.randint(1, 6)
+if a==b:
+    print(f'Tiveste sorte, o dado calhou duas vezes no número {a}.')
+else:
+    print(f'Tiveste azar, o dado calhou em {a} e {b}.')
+
+#Adivinhar numero
+import random
+a = random.randint(1, 100)
+b = int(input("Diz um número?"))
+c = 0
+while b != a:
+    if a < b:
+        print(f'"Esse número é maior que o meu número."')
+    elif a > b:
+        print(f'"Esse número é menor que o meu número."')
+    b = int(input("Diz um número?"))
+    c +=1
+if a == b:
+    c += 1
+    print(f'"Acertaste o número."')
+    print(f'"Acertaste ao fim de {c} tentativas."')
+

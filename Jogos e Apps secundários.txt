@@ -1,0 +1,157 @@
+Jogos e Apps secundários
+
+#Calculo empréstimo casa-para corrigir depois
+
+vcasa = int(input("Qual o valor total em € da sua casa?"))
+slm = int(input("Qual o seu salário mensal em €?"))
+time = int(input("Em quantos anos você deseja pagar a sua casa?"))
+sl30 = slm*30
+prest = (vcasa/time/12)
+if prest< sl30:
+    print(f'"A prestação mensal de {prest}€ é superior a 30% do seu salário."')
+else:
+    print(f'"A prestação mensal de {prest}€ é inferior a 30% do seu salário."')
+
+#Verificador Marca de carros
+
+marca = input("Diz uma marca de carros?")
+if marca in('Ford Chevrolet Tesla Dodge Range Rover Jeep'):
+    print(f'"{marca} é Americana."')
+elif marca in('Toyota Honda Susuki Xiaomi'):
+    print(f'"{marca} é Asiática."')
+elif marca in('BMW Peugeot Mini Dacia Mercedes Audi'):
+    print(f'"{marca} é Europeia."')
+elif marca in('Innoson Kantanka Kiira'):
+    print(f'{marca} é Africana."')
+else:
+    print(f'"A tua marca não está presente na nossa base de dados."')
+
+#Ajuste ordenado
+
+ordenado= int(input("Qual o teu ordenado atual?"))
+if ordenado >= 500:
+    ordenado = ordenado+(ordenado*(15/100))
+elif ordenado >= 1000:
+    ordenado = ordenado+(ordenado*(10/100))
+else:
+    ordenado = ordenado+(ordenado*(5/100))
+print(f'"O teu novo ordenado é de {ordenado}€."')
+
+#Soma valores positivos e negativos
+
+i = int(input("Insere um número."))
+
+soma = 0
+
+while i >= 0:
+ soma += i
+ i = int(input("Insere um novo número."))
+
+print('A soma de todos os números é',soma)
+
+#Valores inteiros entre um valor e outro
+
+x = int(input("Insere um número inicial."))
+y = int(input("Insere um número final."))
+for x in range (x, y):
+ print(x, end=' ')
+
+#Países Europa
+
+país = input("Diz um País da Europa?")
+if país in('Portugal Espanha França Reino Unido Belgica Holanda Luxemburgo Alemanha Suiça Linchenstein Vaticano Polónia Grécia Albânia Grécia Montenegro Kosovo Andorra Mónaco União Soviética Macedónia Macedónia do Norte Sérvia Austria Hungria Rússia Urcrânia Irlanda San Marinho Malta Finl'
+            'ãndia Suécia Noruega Islândia Gronel'
+            'ândia Letónia Estónia Lituânia Moldávia Chipre Turquia Eslováquia Eslovénia Roménia Bulgária Hungria Biolorússia Yugoslávia Tchéquia Croácia Bósnia e Herzegovina Monte Negro Dinamarca Ilhas Faroe '):
+    print(f'"Parabens,{país} é da Europa."')
+else:
+    print(f'"Perdeste,{país} não é da Europa e/ou não existe."')
+
+#Somatório
+
+n = int(input("Insere um número."))
+soma = 0
+
+i = 0
+while i <= n:
+ soma += n
+ n -= 1
+
+print('A soma de todos os números é',soma)
+
+#Tabuada
+
+n = int(input("Insere um número."))
+
+for x in range(1,11):
+    print(f'{n}x{x} = {n*x}')
+
+#Quantidade números pares e impares
+
+i = int(input("Insere um número."))
+p = 0
+impar = 0
+while i != 0:
+    if i % 2 == 0:
+     p += 1
+     i = int(input("Insere um número."))
+    if i % 2 != 0:
+     impar += 1
+     i = int(input("Insere um número."))
+
+print(f'Insere inseriste {p} números pares e {impar} números ímpares.')
+
+#Sortear nomes-para modificar
+
+import random
+
+
+nomes = ["Bernardo", "Zé", "Rodrigo", "Afonso"]
+
+sorteado = random.choice(nomes)
+print(sorteado)
+
+#Calculo raio de um circulo
+
+from math import pi
+
+r = int(input("Insere o raio de um circulo."))
+
+a = pi*(r*r)
+
+print(f'A area do teu círculo é de {a}.')
+
+#Recenceamento militar
+
+nascimento = int(input("Qual o ano em que nasceste?"))
+from datetime import date
+hoje = date.today().year
+idade = hoje-nascimento
+if idade < 18:
+    print(f'"Não tens de te apresentar ans forças armadas."')
+elif idade > 21:
+    print(f'"Não tens de te apresentar ans forças armadas."')
+else:
+    print(f'"Tens de te apresentar ans forças armadas."')
+
+#Lista números
+
+import random
+
+lista_numeros = []
+
+def sorteio():
+    soma = 0
+    while soma < 10:
+        lista_numeros.append(random.randint(1, 20))
+        soma += 1
+    print(f"Os 10 valores sorteados foram:", lista_numeros)
+
+def soma_pares(lista_numeros):
+    soma_numeros_pares = 0
+    for n in lista_numeros:
+            if n % 2 == 0:
+                soma_numeros_pares += n
+    print(f"A soma dos valores sorteados na lista {lista_numeros} é {soma_numeros_pares}.")
+
+numeros = sorteio()
+soma_pares(lista_numeros)

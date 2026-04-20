@@ -1,76 +1,110 @@
-import tkinter as tk 
-from tkinter import*
+import tkinter as tk
 from tkinter import messagebox
 
 def adicionar():
- 
     nome = input_Nome.get()
     tel = input_Telefone.get()
-    end = input_Endereço.get()
+    end = input_Endereco.get()
     dist = input_Distrito.get()
-    pais = input_País.get()
+    pais = input_Pais.get()
     email = input_Email.get()
- 
+
+    if not nome:
+        messagebox.showwarning("Erro", "Digite pelo menos o nome")
+        return
+
     with open('agenda.txt', 'a') as arquivo:
-        arquivo.write(nome + '\n' + tel + '\n' + end + '\n' + dist + '\n' + pais + '\n' + email + '\n')
- 
-    messagebox.showinfo('Agenda','Cadstro Efetuado com Sucesso!')
- 
-    input_Nome.delete('0', 'end')
-    input_Telefone.delete('0', 'end')
-    input_Endereço.delete('0', 'end')
-    input_Distrito.delete('0', 'end')
-    input_País.delete('0', 'end')
-    input_Email.delete('0', 'end')
+        arquivo.write(f"{nome};{tel};{end};{dist};{pais};{email}\n")
+
+    messagebox.showinfo('Agenda','Cadastro efetuado com sucesso!')
+
+    input_Nome.delete(0, 'end')
+    input_Telefone.delete(0, 'end')
+    input_Endereco.delete(0, 'end')
+    input_Distrito.delete(0, 'end')
+    input_Pais.delete(0, 'end')
+    input_Email.delete(0, 'end')
+
+
+def pesquisar():
+    nome = input_Nome.get()
+
+    try:
+        with open('agenda.txt', 'r') as arquivo:
+            linhas = arquivo.readlines()
+
+        for linha in linhas:
+            dados = linha.strip().split(";")
+            if dados[0] == nome:
+                messagebox.showinfo("Resultado",
+                    f"Nome: {dados[0]}\nTelefone: {dados[1]}\nEndereço: {dados[2]}\nDistrito: {dados[3]}\nPaís: {dados[4]}\nEmail: {dados[5]}")
+                return
+
+        messagebox.showwarning("Aviso", "Contato não encontrado")
+
+    except FileNotFoundError:
+        messagebox.showerror("Erro", "Arquivo não encontrado")
+
+
+def eliminar():
+    nome = input_Nome.get()
+
+    try:
+        with open('agenda.txt', 'r') as arquivo:
+            linhas = arquivo.readlines()
+
+        with open('agenda.txt', 'w') as arquivo:
+            encontrado = False
+            for linha in linhas:
+                dados = linha.strip().split(";")
+                if dados[0] != nome:
+                    arquivo.write(linha)
+                else:
+                    encontrado = True
+
+        if encontrado:
+            messagebox.showinfo("Sucesso", "Contato eliminado")
+        else:
+            messagebox.showwarning("Aviso", "Contato não encontrado")
+
+    except FileNotFoundError:
+        messagebox.showerror("Erro", "Arquivo não encontrado")
+
 
 root = tk.Tk()
-
-root.title("Janela 1")
+root.title("Agenda")
 root.geometry("600x600")
 
 branco = "#ddf6f9"
 root.configure(bg=branco)
 
-label = tk.Label(root, text="Nome", fg="black", bg="white")
-label.place(x=50, y=50)
+tk.Label(root, text="Nome", bg="white").place(x=50, y=50)
+tk.Label(root, text="Telefone", bg="white").place(x=50, y=100)
+tk.Label(root, text="Endereço", bg="white").place(x=50, y=150)
+tk.Label(root, text="Distrito", bg="white").place(x=50, y=200)
+tk.Label(root, text="País", bg="white").place(x=350, y=200)
+tk.Label(root, text="Email", bg="white").place(x=50, y=250)
 
-label2 = tk.Label(root, text="Telefone", fg="black", bg="white")
-label2.place(x=50, y=100)
+input_Nome = tk.Entry(root)
+input_Nome.place(width=350, x=150, y=50)
 
-label3 = tk.Label(root, text="Endereço", fg="black", bg="white")
-label3.place(x=50, y=150)
+input_Telefone = tk.Entry(root)
+input_Telefone.place(width=350, x=150, y=100)
 
-label4 = tk.Label(root, text="Distrito", fg="black", bg="white")
-label4.place(x=50, y=200)
+input_Endereco = tk.Entry(root)
+input_Endereco.place(width=350, x=150, y=150)
 
-label5 = tk.Label(root, text="País", fg="black", bg="white")
-label5.place(x=350, y=200)
+input_Distrito = tk.Entry(root)
+input_Distrito.place(width=100, x=150, y=200)
 
-label6 = tk.Label(root, text="Email", fg="black", bg="white")
-label6.place(x=50, y=250)
+input_Pais = tk.Entry(root)
+input_Pais.place(width=100, x=400, y=200)
 
-input_Nome = Entry(root, font='Time 10',show='*')
-input_Nome.place(width=350, height=20,x=150 ,y=50)
+input_Email = tk.Entry(root)
+input_Email.place(width=350, x=150, y=250)
 
-input_Telefone = Entry(root, font='Time 10',show='*')
-input_Telefone.place(width=350, height=20,x=150 ,y=100)
-
-input_Endereço = Entry(root, font='Time 10',show='*')
-input_Endereço.place(width=350, height=20,x=150 ,y=150)
-
-input_Distrito = Entry(root, font='Time 10',show='*')
-input_Distrito.place(width=100, height=20,x=150 ,y=200)
-
-input_País = Entry(root, font='Time 10',show='*')
-input_País.place(width=100, height=20,x=400 ,y=200)
-
-input_Email = Entry(root, font='Time 10',show='*')
-input_Email.place(width=350, height=20,x=150 ,y=250)
-
-button1 = tk.Button(text="Adicionar", command=adicionar)
-button1.place(width=150, height=20, x=100, y=300)
-
-button2 = tk.Button(text="Pesquisar")
-button2.place(width=150, height=20, x=300, y=300)
+tk.Button(text="Adicionar", command=adicionar).place(width=150, x=50, y=300)
+tk.Button(text="Pesquisar", command=pesquisar).place(width=150, x=225, y=300)
+tk.Button(text="Eliminar", command=eliminar).place(width=150, x=400, y=300)
 
 root.mainloop()

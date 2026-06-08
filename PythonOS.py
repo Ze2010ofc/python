@@ -470,23 +470,23 @@ def abrir_agenda():
     lf = tk.LabelFrame(main_, text=" Contactos ", font=("Segoe UI",9,"bold"),
                        bg="#F8FAFC", fg="#1E293B", bd=1, relief="groove")
     lf.grid(row=0, column=1, sticky="nsew")
-    lf.columnconfigure(0, weight=1); lf.rowconfigure(1, weight=1)
+    lf.columnconfigure(0, weight=1); lf.rowconfigure(2, weight=1)
 
     pesq_var = tk.StringVar()
     pesq_var.trace_add("write", lambda *_: filtrar())
     pe = tk.Entry(lf, textvariable=pesq_var, font=("Segoe UI",10),
                   relief="flat", bg="white", fg="#1E293B",
                   highlightbackground="#E2E8F0", highlightthickness=1)
-    pe.grid(row=0, column=0, sticky="ew", padx=8, pady=(8,4), ipady=3)
+    pe.grid(row=0, column=0, columnspan=2, sticky="ew", padx=8, pady=(8,2), ipady=3)
     tk.Label(lf, text="🔍 pesquisa em todos os campos",
              font=("Segoe UI",7), bg="#F8FAFC", fg="#94A3B8"
-             ).grid(row=0, column=0, sticky="e", padx=12)
+             ).grid(row=1, column=0, sticky="w", padx=10, pady=(0,4))
 
     colunas = ("id","nome","telefone","endereco","distrito","pais","email")
     tabela = ttk.Treeview(lf, columns=colunas, show="headings", selectmode="browse")
-    tabela.grid(row=1, column=0, sticky="nsew", padx=8, pady=(0,8))
+    tabela.grid(row=2, column=0, sticky="nsew", padx=8, pady=(0,8))
     sb = ttk.Scrollbar(lf, orient="vertical", command=tabela.yview)
-    sb.grid(row=1, column=1, sticky="ns")
+    sb.grid(row=2, column=1, sticky="ns")
     tabela.configure(yscrollcommand=sb.set)
 
     for col, w in zip(colunas, [30,130,100,130,75,60,155]):
@@ -505,8 +505,10 @@ def abrir_agenda():
                 p = f"%{q}%"
                 rows = get("SELECT * FROM contactos WHERE "
                            "LOWER(nome) LIKE LOWER(?) OR LOWER(telefone) LIKE LOWER(?) "
-                           "OR LOWER(email) LIKE LOWER(?) ORDER BY LOWER(nome)",
-                           (p,p,p))
+                           "OR LOWER(email) LIKE LOWER(?) OR LOWER(endereco) LIKE LOWER(?) "
+                           "OR LOWER(distrito) LIKE LOWER(?) OR LOWER(pais) LIKE LOWER(?) "
+                           "ORDER BY LOWER(nome)",
+                           (p,p,p,p,p,p))
             else:
                 rows = get("SELECT * FROM contactos ORDER BY LOWER(nome)")
         for r in rows: tabela.insert("","end",values=r)
@@ -781,16 +783,16 @@ def abrir_forca():
 
     pl = painel(win); pl.pack(padx=30, fill="x", pady=(0,8))
     lv = tk.Label(pl, text="0", font=("Helvetica",18,"bold"),
-                  bg=OS_COR["card"], fg=OS_COR["verde"]); 
+                  bg=OS_COR["card"], fg=OS_COR["verde"])
     ld = tk.Label(pl, text="0", font=("Helvetica",18,"bold"),
                   bg=OS_COR["card"], fg=OS_COR["vermelho"])
-    for lbl, txt, side in [(None,"Vitórias","left"),(None,"Derrotas","right")]:
-        col = tk.Frame(pl, bg=OS_COR["card"]); col.pack(side=side, expand=True, pady=6)
+    for i, (lb, txt) in enumerate([(lv,"Vitórias"),(ld,"Derrotas")]):
+        col = tk.Frame(pl, bg=OS_COR["card"]); col.pack(side="left", expand=True, pady=6)
         tk.Label(col, text=txt, font=("Helvetica",8),
                  bg=OS_COR["card"], fg=OS_COR["muted"]).pack()
-        (lv if txt=="Vitórias" else ld).pack(in_=col)
-    tk.Frame(pl, bg=OS_COR["borda"], width=1).pack(side="left",fill="y",pady=4)
-    lv.pack(); ld.pack()  # re-pack inside col handled above
+        lb.pack(in_=col); lb.lift()
+        if i == 0:
+            tk.Frame(pl, bg=OS_COR["borda"], width=1).pack(side="left", fill="y", pady=4)
 
     meio = tk.Frame(win, bg=OS_COR["fundo"]); meio.pack(padx=16, fill="x")
 
@@ -967,12 +969,12 @@ def abrir_numero():
     pl=painel(win); pl.pack(padx=30,fill="x",pady=(0,12))
     lv=tk.Label(pl,text="0",font=("Helvetica",20,"bold"),bg=OS_COR["card"],fg=OS_COR["verde"])
     ld=tk.Label(pl,text="0",font=("Helvetica",20,"bold"),bg=OS_COR["card"],fg=OS_COR["vermelho"])
-    for lbl,lb,side in [("Vitórias",lv,"left"),("Derrotas",ld,"right")]:
-        col=tk.Frame(pl,bg=OS_COR["card"]); col.pack(side=side,expand=True,pady=8)
+    for i,(lbl,lb) in enumerate([("Vitórias",lv),("Derrotas",ld)]):
+        col=tk.Frame(pl,bg=OS_COR["card"]); col.pack(side="left",expand=True,pady=8)
         tk.Label(col,text=lbl,font=("Helvetica",7),bg=OS_COR["card"],fg=OS_COR["muted"]).pack()
-        lb.pack(in_=col)
-    tk.Frame(pl,bg=OS_COR["borda"],width=1).pack(side="left",fill="y",pady=5)
-    lv.pack(); ld.pack()
+        lb.pack(in_=col); lb.lift()
+        if i==0:
+            tk.Frame(pl,bg=OS_COR["borda"],width=1).pack(side="left",fill="y",pady=5)
 
     lbl_tent=tk.Label(win,text="",font=("Helvetica",10),bg=OS_COR["fundo"],fg=OS_COR["amarelo"]); lbl_tent.pack()
     lbl_dica=tk.Label(win,text="",font=("Helvetica",26),bg=OS_COR["fundo"],fg=OS_COR["branco"]); lbl_dica.pack(pady=6)
@@ -1046,12 +1048,12 @@ def abrir_coc():
     lv=tk.Label(pl,text="0",font=("Helvetica",20,"bold"),bg=OS_COR["card"],fg=OS_COR["verde"])
     ld=tk.Label(pl,text="0",font=("Helvetica",20,"bold"),bg=OS_COR["card"],fg=OS_COR["vermelho"])
     ls=tk.Label(pl,text="0",font=("Helvetica",20,"bold"),bg=OS_COR["card"],fg=OS_COR["amarelo"])
-    for lbl,lb,side in [("Vitórias",lv,"left"),("Streak",ls,"left"),("Derrotas",ld,"right")]:
-        col=tk.Frame(pl,bg=OS_COR["card"]); col.pack(side=side,expand=True,pady=8)
+    for i,(lbl,lb) in enumerate([("Vitórias",lv),("Streak",ls),("Derrotas",ld)]):
+        col=tk.Frame(pl,bg=OS_COR["card"]); col.pack(side="left",expand=True,pady=8)
         tk.Label(col,text=lbl,font=("Helvetica",7),bg=OS_COR["card"],fg=OS_COR["muted"]).pack()
-        lb.pack(in_=col)
-    tk.Frame(pl,bg=OS_COR["borda"],width=1).pack(side="left",fill="y",pady=5)
-    lv.pack(); ls.pack(); ld.pack()
+        lb.pack(in_=col); lb.lift()
+        if i<2:
+            tk.Frame(pl,bg=OS_COR["borda"],width=1).pack(side="left",fill="y",pady=5)
 
     lbl_m=tk.Label(win,text="🪙",font=("Helvetica",56),bg=OS_COR["fundo"]); lbl_m.pack(pady=6)
     lbl_r=tk.Label(win,text="",font=("Helvetica",13,"bold"),bg=OS_COR["fundo"],fg=OS_COR["branco"]); lbl_r.pack()
@@ -1386,12 +1388,12 @@ def abrir_orcamento():
     lbl_rec=tk.Label(sum_f,text="€0.00",font=("Helvetica",18,"bold"),bg=OS_COR["card"],fg="#4ADE80")
     lbl_des=tk.Label(sum_f,text="€0.00",font=("Helvetica",18,"bold"),bg=OS_COR["card"],fg="#F87171")
     lbl_sal=tk.Label(sum_f,text="€0.00",font=("Helvetica",18,"bold"),bg=OS_COR["card"],fg="#FACC15")
-    for lbl,lb,side in [("Receitas",lbl_rec,"left"),("Saldo",lbl_sal,"left"),("Despesas",lbl_des,"right")]:
-        col=tk.Frame(sum_f,bg=OS_COR["card"]); col.pack(side=side,expand=True,pady=8)
+    for i,(lbl,lb) in enumerate([("Receitas",lbl_rec),("Saldo",lbl_sal),("Despesas",lbl_des)]):
+        col=tk.Frame(sum_f,bg=OS_COR["card"]); col.pack(side="left",expand=True,pady=8)
         tk.Label(col,text=lbl,font=("Helvetica",7),bg=OS_COR["card"],fg=OS_COR["muted"]).pack()
-        lb.pack(in_=col)
-    tk.Frame(sum_f,bg=OS_COR["borda"],width=1).pack(side="left",fill="y",pady=5)
-    lbl_rec.pack(); lbl_des.pack(); lbl_sal.pack()
+        lb.pack(in_=col); lb.lift()
+        if i<2:
+            tk.Frame(sum_f,bg=OS_COR["borda"],width=1).pack(side="left",fill="y",pady=5)
     fp=painel(win); fp.pack(padx=24,fill="x",pady=(0,8))
     fp.columnconfigure(1,weight=1)
     vd=tk.StringVar(); vv=tk.StringVar(); vt=tk.StringVar(value="receita")
@@ -1652,7 +1654,7 @@ def abrir_cient():
     tk.Frame(win,bg=COR2["sep"],height=1).pack(fill="x")
     grade=tk.Frame(win,bg=COR2["fundo"]); grade.pack(fill="both",expand=True,padx=6,pady=6)
     for c in range(5): grade.columnconfigure(c,weight=1,uniform="c")
-    for r in range(6): grade.rowconfigure(r,weight=1,uniform="r")
+    for r in range(7): grade.rowconfigure(r,weight=1,uniform="r")
     disp=["0"]; acum=[None]; opr=[None]; novo=[False]
     def fmt(v):
         if v==int(v) and abs(v)<1e12: return str(int(v))
@@ -1706,7 +1708,7 @@ def abrir_cient():
         else:
             try:
                 v=float(disp[0].replace(",","."))
-                funcs={"sin":math.sin,"cos":math.cos,"tan":math.tan,"√":math.sqrt,"log":math.log10,"ln":math.log,"x²":lambda x:x**2,"x³":lambda x:x**3,"1/x":lambda x:1/x,"π":lambda _:math.pi,"e":lambda _:math.e,"!":math.factorial,"abs":abs}
+                funcs={"sin":math.sin,"cos":math.cos,"tan":math.tan,"√":math.sqrt,"log":math.log10,"ln":math.log,"x²":lambda x:x**2,"x³":lambda x:x**3,"1/x":lambda x:1/x,"π":lambda _:math.pi,"e":lambda _:math.e,"!":lambda x:math.factorial(int(round(x))),"abs":abs}
                 if t in funcs: res=funcs[t](v if t not in ("π","e") else 0); disp[0]=fmt(res); novo[0]=True; upd()
             except Exception as ex: err("Erro")
     layout=[
@@ -1913,7 +1915,7 @@ def abrir_flappy():
         # Score
         cv.create_text(W//2,40,text=str(score[0]),font=("Helvetica",32,"bold"),fill="white")
         if not activo[0]:
-            cv.create_rectangle(W//2-120,H//2-50,W//2+120,H//2+60,fill="#00000099",outline="")
+            cv.create_rectangle(W//2-120,H//2-50,W//2+120,H//2+60,fill="#000000",stipple="gray50",outline="")
             msg="Pressiona ESPAÇO para começar" if score[0]==0 else f"Fim! Pontuação: {score[0]}\nESPAÇO para jogar de novo"
             cv.create_text(W//2,H//2,text=msg,font=("Helvetica",14,"bold"),fill="white",justify="center")
     def jump(ev=None):
@@ -1974,7 +1976,7 @@ def abrir_space():
         cv.create_text(16,16,text=f"Score: {score[0]}",font=("Helvetica",12,"bold"),fill="white",anchor="w")
         cv.create_text(W-16,16,text="❤ "*lives[0],font=("Helvetica",12),fill="#F87171",anchor="e")
         if not activo[0]:
-            cv.create_rectangle(W//2-130,H//2-50,W//2+130,H//2+60,fill="#00000099",outline="")
+            cv.create_rectangle(W//2-130,H//2-50,W//2+130,H//2+60,fill="#000000",stipple="gray50",outline="")
             msg="ENTER para começar" if score[0]==0 else f"Game Over!\nScore: {score[0]}\nENTER para jogar de novo"
             cv.create_text(W//2,H//2,text=msg,font=("Helvetica",14,"bold"),fill="white",justify="center")
     import time
@@ -2179,7 +2181,7 @@ def abrir_reflexos():
             hit=any(cv.find_closest(ev.x,ev.y)[0]==i for i in items)
             if not hit: 
                 # clique fora — penalidade
-                tempo=0.8; tempos.append(tempo)
+                tempo=800; tempos.append(tempo)
                 lbl_res.config(text="❌ Clicaste fora! +800ms",fg="#F87171")
             else:
                 tempo=round((time.time()-t_apareceu[0])*1000)
@@ -2501,12 +2503,24 @@ class PythonOS:
         self._inner.bind("<Configure>",
             lambda e: canvas_w.configure(
                 scrollregion=canvas_w.bbox("all")))
-        canvas_w.bind("<Configure>",
-            lambda e: canvas_w.itemconfig(self._win_id, width=e.width))
-        canvas_w.bind("<MouseWheel>",
-            lambda e: canvas_w.yview_scroll(
-                -1 * (e.delta // 120), "units"))
+
+        def _ao_redimensionar(e):
+            canvas_w.itemconfig(self._win_id, width=e.width)
+            # nº de colunas que cabem (carta ~172px de largura)
+            novo_cols = max(1, (e.width - 12) // 172)
+            if novo_cols != getattr(self, "_cols", 0):
+                self._cols = novo_cols
+                self._renderizar_conteudo()
+        canvas_w.bind("<Configure>", _ao_redimensionar)
+
+        def _scroll(delta):
+            canvas_w.yview_scroll(-1 * (delta // 120 if delta else 0), "units")
+        canvas_w.bind("<MouseWheel>", lambda e: _scroll(e.delta))
+        # roda do rato em Linux/X11
+        canvas_w.bind("<Button-4>", lambda e: canvas_w.yview_scroll(-1, "units"))
+        canvas_w.bind("<Button-5>", lambda e: canvas_w.yview_scroll(1, "units"))
         self._canvas_w = canvas_w
+        self._cols = 4
         self._renderizar_conteudo()
 
     # ── Renderização ───────────────────────────────────────────────
@@ -2573,19 +2587,24 @@ class PythonOS:
     def _grelha(self, pai, apps):
         gf = tk.Frame(pai, bg=OS_COR["fundo"])
         gf.pack(fill="x", padx=6)
+        cols = max(1, getattr(self, "_cols", 4))
+        for c in range(cols):
+            gf.columnconfigure(c, weight=1)
         for idx, (nome, emoji, desc, func, acento) in enumerate(apps):
-            self._card(gf, nome, emoji, desc, func, acento)
+            r, c = divmod(idx, cols)
+            self._card(gf, nome, emoji, desc, func, acento, r, c)
 
-    def _card(self, row, nome, emoji, desc, func, acento):
+    def _card(self, row, nome, emoji, desc, func, acento, r=0, c=0):
         card = tk.Frame(row, bg=OS_COR["card"],
                         highlightbackground=OS_COR["borda"],
                         highlightthickness=1, cursor="hand2",
-                        width=162, height=165)
-        card.pack(side="left", padx=5, pady=5)
-        card.pack_propagate(False)
+                        width=162, height=182)
+        card.grid(row=r, column=c, padx=5, pady=5)
+        card.grid_propagate(False)
 
         # Faixa de cor no topo
-        tk.Frame(card, bg=acento, height=3).pack(fill="x")
+        faixa = tk.Frame(card, bg=acento, height=3)
+        faixa.pack(fill="x")
 
         tk.Label(card, text=emoji, font=("Helvetica", 28),
                  bg=OS_COR["card"]).pack(pady=(10, 2))
@@ -2598,7 +2617,7 @@ class PythonOS:
         tk.Label(card, text=desc,
                  font=("Helvetica", 7),
                  bg=OS_COR["card"], fg=OS_COR["muted"],
-                 justify="center", wraplength=146).pack(pady=(2, 8))
+                 justify="center", wraplength=146).pack(pady=(2, 6))
 
         btn = tk.Button(card, text="Abrir",
                         font=("Helvetica", 8, "bold"),
@@ -2606,27 +2625,35 @@ class PythonOS:
                         activebackground=acento,
                         relief="flat", cursor="hand2",
                         padx=14, pady=4, command=func)
-        btn.pack(pady=(0, 10))
+        btn.pack(side="bottom", pady=(0, 12))
 
-        # Hover
+        # Widgets cujo fundo NÃO deve mudar no hover (mantêm cor de acento)
+        fixos = {str(faixa), str(btn)}
+
         def enter(e, c=card):
             c.config(bg=OS_COR["card_hover"],
                      highlightbackground=acento)
             for w in c.winfo_children():
+                if str(w) in fixos:
+                    continue
                 try: w.config(bg=OS_COR["card_hover"])
-                except: pass
+                except tk.TclError: pass
 
         def leave(e, c=card):
             c.config(bg=OS_COR["card"],
                      highlightbackground=OS_COR["borda"])
             for w in c.winfo_children():
+                if str(w) in fixos:
+                    continue
                 try: w.config(bg=OS_COR["card"])
-                except: pass
+                except tk.TclError: pass
 
         card.bind("<Enter>", enter)
         card.bind("<Leave>", leave)
         card.bind("<Button-1>", lambda e: func())
         for w in card.winfo_children():
+            if str(w) in fixos:
+                continue
             w.bind("<Enter>", enter)
             w.bind("<Leave>", leave)
 

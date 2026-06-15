@@ -1,318 +1,408 @@
 import tkinter as tk
 from tkinter import messagebox
 
-preco_pc = 2000
-preco_tel = 900
-preco_tv = 1000
-preco_fones = 20
-preco_rato = 50
+preco_microondas = 80
+preco_frigorifico = 300
+preco_aspirador = 90
 
-qtd_pc = 0
-qtd_tel = 0
-qtd_tv = 0
-qtd_fones = 0
-qtd_rato = 0
+preco_pc_gaming = 900
+preco_headset = 35
+preco_rato_gaming = 25
 
-users = []
-passwords = []
+preco_telemovel = 200
+preco_powerbank = 20
+preco_carregador = 15
 
-carrinho_pc = []
-carrinho_tel = []
-carrinho_tv = []
-carrinho_fones = []
-carrinho_rato = []
+qtd_microondas = 0
+qtd_frigorifico = 0
+qtd_aspirador = 0
 
-utilizador_atual = ""
-posicao_user = -1
+qtd_pc_gaming = 0
+qtd_headset = 0
+qtd_rato_gaming = 0
+
+qtd_telemovel = 0
+qtd_powerbank = 0
+qtd_carregador = 0
+
+username_atual = ""
+
+ficheiro_contas = "contas.txt"
 
 
 def limpar_janela():
-    for widget in root.winfo_children():
-        widget.destroy()
+    for coisa in root.winfo_children():
+        coisa.destroy()
 
 
-def procurar_user(nome):
-    i = 0
-    while i < len(users):
-        if users[i] == nome:
-            return i
-        i = i + 1
-    return -1
+def ver_se_conta_existe(username):
+    try:
+        ficheiro = open(ficheiro_contas, "r")
+        linhas = ficheiro.readlines()
+        ficheiro.close()
 
+        for linha in linhas:
+            dados = linha.strip().split(";")
 
-def gravar_carrinho():
-    if posicao_user >= 0:
-        carrinho_pc[posicao_user] = qtd_pc
-        carrinho_tel[posicao_user] = qtd_tel
-        carrinho_tv[posicao_user] = qtd_tv
-        carrinho_fones[posicao_user] = qtd_fones
-        carrinho_rato[posicao_user] = qtd_rato
+            if len(dados) >= 2:
+                if dados[0] == username:
+                    return True
 
+    except FileNotFoundError:
+        return False
 
-def atualizar_quantidades():
-    label_qtd_pc.config(text=str(qtd_pc))
-    label_qtd_tel.config(text=str(qtd_tel))
-    label_qtd_tv.config(text=str(qtd_tv))
-    label_qtd_fones.config(text=str(qtd_fones))
-    label_qtd_rato.config(text=str(qtd_rato))
-
-
-def atualizar_carrinho():
-    total = qtd_pc + qtd_tel + qtd_tv + qtd_fones + qtd_rato
-    label_carrinho.config(text="Carrinho: " + str(total) + " produtos")
-    gravar_carrinho()
+    return False
 
 
 def criar_conta():
-    nome = entry_user.get()
+    username = entry_username.get()
     password = entry_password.get()
 
-    if nome == "" or password == "":
-        messagebox.showerror("Erro", "Tens de escrever user e password.")
+    if username == "" or password == "":
+        messagebox.showerror("Erro", "Tens de escrever username e password.")
     else:
-        pos = procurar_user(nome)
-
-        if pos != -1:
-            messagebox.showerror("Erro", "Esse user já existe.")
+        if ver_se_conta_existe(username):
+            messagebox.showerror("Erro", "Essa conta já existe.")
         else:
-            users.append(nome)
-            passwords.append(password)
-
-            carrinho_pc.append(0)
-            carrinho_tel.append(0)
-            carrinho_tv.append(0)
-            carrinho_fones.append(0)
-            carrinho_rato.append(0)
+            ficheiro = open(ficheiro_contas, "a")
+            ficheiro.write(username + ";" + password + "\n")
+            ficheiro.close()
 
             messagebox.showinfo("Conta criada", "Conta criada com sucesso.")
 
 
 def iniciar_sessao():
-    global qtd_pc, qtd_tel, qtd_tv, qtd_fones, qtd_rato
-    global utilizador_atual, posicao_user
+    global username_atual
 
-    nome = entry_user.get()
+    username = entry_username.get()
     password = entry_password.get()
 
-    pos = procurar_user(nome)
-
-    if pos == -1:
-        messagebox.showerror("Erro", "User não existe.")
+    if username == "" or password == "":
+        messagebox.showerror("Erro", "Tens de escrever username e password.")
     else:
-        if passwords[pos] == password:
-            utilizador_atual = nome
-            posicao_user = pos
+        try:
+            ficheiro = open(ficheiro_contas, "r")
+            linhas = ficheiro.readlines()
+            ficheiro.close()
 
-            qtd_pc = carrinho_pc[pos]
-            qtd_tel = carrinho_tel[pos]
-            qtd_tv = carrinho_tv[pos]
-            qtd_fones = carrinho_fones[pos]
-            qtd_rato = carrinho_rato[pos]
+            encontrou = False
 
-            mostrar_loja()
-        else:
-            messagebox.showerror("Erro", "Password errada.")
+            for linha in linhas:
+                dados = linha.strip().split(";")
 
+                if len(dados) >= 2:
+                    if dados[0] == username and dados[1] == password:
+                        encontrou = True
 
-def sair_conta():
-    global utilizador_atual, posicao_user
-    global qtd_pc, qtd_tel, qtd_tv, qtd_fones, qtd_rato
+            if encontrou == True:
+                username_atual = username
+                mostrar_loja()
+            else:
+                messagebox.showerror("Erro", "Username ou password incorretos.")
 
-    gravar_carrinho()
-
-    utilizador_atual = ""
-    posicao_user = -1
-
-    qtd_pc = 0
-    qtd_tel = 0
-    qtd_tv = 0
-    qtd_fones = 0
-    qtd_rato = 0
-
-    mostrar_menu()
+        except FileNotFoundError:
+            messagebox.showerror("Erro", "Ainda não existe nenhuma conta criada.")
 
 
-def adicionar_pc():
-    global qtd_pc
-    qtd_pc = qtd_pc + 1
-    label_qtd_pc.config(text=str(qtd_pc))
+def atualizar_carrinho():
+    total = qtd_microondas + qtd_frigorifico + qtd_aspirador
+    total = total + qtd_pc_gaming + qtd_headset + qtd_rato_gaming
+    total = total + qtd_telemovel + qtd_powerbank + qtd_carregador
+
+    label_carrinho.config(text="Carrinho: " + str(total) + " produtos")
+
+    label_qtd_microondas.config(text=str(qtd_microondas))
+    label_qtd_frigorifico.config(text=str(qtd_frigorifico))
+    label_qtd_aspirador.config(text=str(qtd_aspirador))
+
+    label_qtd_pc_gaming.config(text=str(qtd_pc_gaming))
+    label_qtd_headset.config(text=str(qtd_headset))
+    label_qtd_rato_gaming.config(text=str(qtd_rato_gaming))
+
+    label_qtd_telemovel.config(text=str(qtd_telemovel))
+    label_qtd_powerbank.config(text=str(qtd_powerbank))
+    label_qtd_carregador.config(text=str(qtd_carregador))
+
+
+def adicionar_microondas():
+    global qtd_microondas
+    qtd_microondas = qtd_microondas + 1
     atualizar_carrinho()
 
 
-def remover_pc():
-    global qtd_pc
-    if qtd_pc > 0:
-        qtd_pc = qtd_pc - 1
-    label_qtd_pc.config(text=str(qtd_pc))
+def remover_microondas():
+    global qtd_microondas
+    if qtd_microondas > 0:
+        qtd_microondas = qtd_microondas - 1
     atualizar_carrinho()
 
 
-def adicionar_tel():
-    global qtd_tel
-    qtd_tel = qtd_tel + 1
-    label_qtd_tel.config(text=str(qtd_tel))
+def adicionar_frigorifico():
+    global qtd_frigorifico
+    qtd_frigorifico = qtd_frigorifico + 1
     atualizar_carrinho()
 
 
-def remover_tel():
-    global qtd_tel
-    if qtd_tel > 0:
-        qtd_tel = qtd_tel - 1
-    label_qtd_tel.config(text=str(qtd_tel))
+def remover_frigorifico():
+    global qtd_frigorifico
+    if qtd_frigorifico > 0:
+        qtd_frigorifico = qtd_frigorifico - 1
     atualizar_carrinho()
 
 
-def adicionar_tv():
-    global qtd_tv
-    qtd_tv = qtd_tv + 1
-    label_qtd_tv.config(text=str(qtd_tv))
+def adicionar_aspirador():
+    global qtd_aspirador
+    qtd_aspirador = qtd_aspirador + 1
     atualizar_carrinho()
 
 
-def remover_tv():
-    global qtd_tv
-    if qtd_tv > 0:
-        qtd_tv = qtd_tv - 1
-    label_qtd_tv.config(text=str(qtd_tv))
+def remover_aspirador():
+    global qtd_aspirador
+    if qtd_aspirador > 0:
+        qtd_aspirador = qtd_aspirador - 1
     atualizar_carrinho()
 
 
-def adicionar_fones():
-    global qtd_fones
-    qtd_fones = qtd_fones + 1
-    label_qtd_fones.config(text=str(qtd_fones))
+def adicionar_pc_gaming():
+    global qtd_pc_gaming
+    qtd_pc_gaming = qtd_pc_gaming + 1
     atualizar_carrinho()
 
 
-def remover_fones():
-    global qtd_fones
-    if qtd_fones > 0:
-        qtd_fones = qtd_fones - 1
-    label_qtd_fones.config(text=str(qtd_fones))
+def remover_pc_gaming():
+    global qtd_pc_gaming
+    if qtd_pc_gaming > 0:
+        qtd_pc_gaming = qtd_pc_gaming - 1
     atualizar_carrinho()
 
 
-def adicionar_rato():
-    global qtd_rato
-    qtd_rato = qtd_rato + 1
-    label_qtd_rato.config(text=str(qtd_rato))
+def adicionar_headset():
+    global qtd_headset
+    qtd_headset = qtd_headset + 1
     atualizar_carrinho()
 
 
-def remover_rato():
-    global qtd_rato
-    if qtd_rato > 0:
-        qtd_rato = qtd_rato - 1
-    label_qtd_rato.config(text=str(qtd_rato))
+def remover_headset():
+    global qtd_headset
+    if qtd_headset > 0:
+        qtd_headset = qtd_headset - 1
     atualizar_carrinho()
 
 
-def apagar_carrinho():
-    global qtd_pc, qtd_tel, qtd_tv, qtd_fones, qtd_rato
-
-    qtd_pc = 0
-    qtd_tel = 0
-    qtd_tv = 0
-    qtd_fones = 0
-    qtd_rato = 0
-
-    atualizar_quantidades()
+def adicionar_rato_gaming():
+    global qtd_rato_gaming
+    qtd_rato_gaming = qtd_rato_gaming + 1
     atualizar_carrinho()
 
-    messagebox.showinfo("Carrinho", "Carrinho apagado.")
+
+def remover_rato_gaming():
+    global qtd_rato_gaming
+    if qtd_rato_gaming > 0:
+        qtd_rato_gaming = qtd_rato_gaming - 1
+    atualizar_carrinho()
+
+
+def adicionar_telemovel():
+    global qtd_telemovel
+    qtd_telemovel = qtd_telemovel + 1
+    atualizar_carrinho()
+
+
+def remover_telemovel():
+    global qtd_telemovel
+    if qtd_telemovel > 0:
+        qtd_telemovel = qtd_telemovel - 1
+    atualizar_carrinho()
+
+
+def adicionar_powerbank():
+    global qtd_powerbank
+    qtd_powerbank = qtd_powerbank + 1
+    atualizar_carrinho()
+
+
+def remover_powerbank():
+    global qtd_powerbank
+    if qtd_powerbank > 0:
+        qtd_powerbank = qtd_powerbank - 1
+    atualizar_carrinho()
+
+
+def adicionar_carregador():
+    global qtd_carregador
+    qtd_carregador = qtd_carregador + 1
+    atualizar_carrinho()
+
+
+def remover_carregador():
+    global qtd_carregador
+    if qtd_carregador > 0:
+        qtd_carregador = qtd_carregador - 1
+    atualizar_carrinho()
+
+
+def confirmar_pagamento():
+    nif = entry_nif.get()
+
+    if nif == "":
+        messagebox.showerror("Erro", "Tens de colocar o número de contribuinte.")
+    else:
+        messagebox.showinfo("Pagamento", "Pagamento confirmado.\nNúmero de contribuinte: " + nif)
+        janela_pagamento.destroy()
 
 
 def pagar():
-    total_produtos = qtd_pc + qtd_tel + qtd_tv + qtd_fones + qtd_rato
-    total_preco = qtd_pc * preco_pc + qtd_tel * preco_tel + qtd_tv * preco_tv + qtd_fones * preco_fones + qtd_rato * preco_rato
+    global entry_nif, janela_pagamento
 
-    janela = tk.Toplevel(root)
-    janela.title("Pagamento")
-    janela.geometry("300x200")
-    janela.configure(bg=branco)
+    total_produtos = qtd_microondas + qtd_frigorifico + qtd_aspirador
+    total_produtos = total_produtos + qtd_pc_gaming + qtd_headset + qtd_rato_gaming
+    total_produtos = total_produtos + qtd_telemovel + qtd_powerbank + qtd_carregador
 
-    tk.Label(janela, text="Total de produtos: " + str(total_produtos), bg="white").place(x=50, y=60)
-    tk.Label(janela, text="Preço total: " + str(total_preco) + "€", bg="white").place(x=50, y=100)
+    total_preco = qtd_microondas * preco_microondas
+    total_preco = total_preco + qtd_frigorifico * preco_frigorifico
+    total_preco = total_preco + qtd_aspirador * preco_aspirador
+    total_preco = total_preco + qtd_pc_gaming * preco_pc_gaming
+    total_preco = total_preco + qtd_headset * preco_headset
+    total_preco = total_preco + qtd_rato_gaming * preco_rato_gaming
+    total_preco = total_preco + qtd_telemovel * preco_telemovel
+    total_preco = total_preco + qtd_powerbank * preco_powerbank
+    total_preco = total_preco + qtd_carregador * preco_carregador
+
+    if total_produtos == 0:
+        messagebox.showerror("Erro", "O carrinho está vazio.")
+    else:
+        janela_pagamento = tk.Toplevel(root)
+        janela_pagamento.title("Pagamento")
+        janela_pagamento.geometry("350x270")
+        janela_pagamento.configure(bg=branco)
+
+        tk.Label(janela_pagamento, text="Total de produtos: " + str(total_produtos), bg="white").place(x=50, y=50)
+        tk.Label(janela_pagamento, text="Preço total = " + str(total_preco) + "€", bg="white").place(x=50, y=90)
+
+        tk.Label(janela_pagamento, text="Número de contribuinte:", bg="white").place(x=50, y=130)
+
+        entry_nif = tk.Entry(janela_pagamento)
+        entry_nif.place(width=160, x=50, y=160)
+
+        tk.Button(janela_pagamento, text="Confirmar", command=confirmar_pagamento).place(width=120, x=110, y=210)
 
 
 def mostrar_menu():
-    global entry_user, entry_password
+    global entry_username, entry_password
 
     limpar_janela()
 
-    tk.Label(root, text="Loja do Zé", bg=branco, font=("Arial", 28)).place(x=180, y=50)
+    tk.Label(root, text="Loja do Zé", bg=branco, font=("Arial", 28)).place(x=210, y=50)
 
-    tk.Label(root, text="User", bg="white").place(x=170, y=150)
-    entry_user = tk.Entry(root)
-    entry_user.place(x=280, y=150)
+    tk.Label(root, text="Username", bg="white").place(x=180, y=150)
+    entry_username = tk.Entry(root)
+    entry_username.place(width=180, x=290, y=150)
 
-    tk.Label(root, text="Password", bg="white").place(x=170, y=200)
+    tk.Label(root, text="Password", bg="white").place(x=180, y=200)
     entry_password = tk.Entry(root, show="*")
-    entry_password.place(x=280, y=200)
+    entry_password.place(width=180, x=290, y=200)
 
-    tk.Button(root, text="Iniciar sessão", command=iniciar_sessao).place(width=150, x=225, y=270)
-    tk.Button(root, text="Criar conta", command=criar_conta).place(width=180, x=210, y=320)
-
+    tk.Button(root, text="Iniciar sessão", command=iniciar_sessao).place(width=130, x=190, y=270)
+    tk.Button(root, text="Criar conta", command=criar_conta).place(width=130, x=340, y=270)
 
 
 def mostrar_loja():
-    global label_qtd_pc, label_qtd_tel, label_qtd_tv, label_qtd_fones, label_qtd_rato
+    global label_qtd_microondas, label_qtd_frigorifico, label_qtd_aspirador
+    global label_qtd_pc_gaming, label_qtd_headset, label_qtd_rato_gaming
+    global label_qtd_telemovel, label_qtd_powerbank, label_qtd_carregador
     global label_carrinho
 
     limpar_janela()
 
-    tk.Label(root, text="Loja do Zé", bg=branco, font=("Arial", 28)).place(x=180, y=10)
-    tk.Label(root, text="Utilizador: " + utilizador_atual, bg="white").place(x=50, y=35)
+    tk.Label(root, text="Loja do Zé", bg=branco, font=("Arial", 28)).place(x=210, y=10)
+    tk.Label(root, text="Conta: " + username_atual, bg="white").place(x=50, y=55)
 
-    tk.Label(root, text="Produto", bg="white").place(x=50, y=70)
-    tk.Label(root, text="No carrinho", bg="white").place(x=480, y=70)
+    tk.Label(root, text="Produto", bg="white").place(x=50, y=85)
+    tk.Label(root, text="Preço", bg="white").place(x=200, y=85)
+    tk.Label(root, text="No carrinho", bg="white").place(x=520, y=85)
 
-    tk.Label(root, text="PC Gamer", bg="white").place(x=50, y=110)
-    tk.Button(root, text="Adicionar", command=adicionar_pc).place(width=80, x=200, y=110)
-    tk.Button(root, text="Remover", command=remover_pc).place(width=80, x=300, y=110)
-    label_qtd_pc = tk.Label(root, text="0", bg="white")
-    label_qtd_pc.place(x=500, y=110)
+    tk.Label(root, text="Eletrodomésticos", bg=branco, font=("Arial", 14)).place(x=50, y=120)
 
-    tk.Label(root, text="Telemóvel", bg="white").place(x=50, y=160)
-    tk.Button(root, text="Adicionar", command=adicionar_tel).place(width=80, x=200, y=160)
-    tk.Button(root, text="Remover", command=remover_tel).place(width=80, x=300, y=160)
-    label_qtd_tel = tk.Label(root, text="0", bg="white")
-    label_qtd_tel.place(x=500, y=160)
+    tk.Label(root, text="Microondas", bg="white").place(x=50, y=155)
+    tk.Label(root, text="Preço = " + str(preco_microondas) + "€", bg="white").place(x=200, y=155)
+    tk.Button(root, text="Adicionar", command=adicionar_microondas).place(width=80, x=300, y=155)
+    tk.Button(root, text="Remover", command=remover_microondas).place(width=80, x=400, y=155)
+    label_qtd_microondas = tk.Label(root, text="0", bg="white")
+    label_qtd_microondas.place(x=555, y=155)
 
-    tk.Label(root, text="TV", bg="white").place(x=50, y=210)
-    tk.Button(root, text="Adicionar", command=adicionar_tv).place(width=80, x=200, y=210)
-    tk.Button(root, text="Remover", command=remover_tv).place(width=80, x=300, y=210)
-    label_qtd_tv = tk.Label(root, text="0", bg="white")
-    label_qtd_tv.place(x=500, y=210)
+    tk.Label(root, text="Frigorífico", bg="white").place(x=50, y=190)
+    tk.Label(root, text="Preço = " + str(preco_frigorifico) + "€", bg="white").place(x=200, y=190)
+    tk.Button(root, text="Adicionar", command=adicionar_frigorifico).place(width=80, x=300, y=190)
+    tk.Button(root, text="Remover", command=remover_frigorifico).place(width=80, x=400, y=190)
+    label_qtd_frigorifico = tk.Label(root, text="0", bg="white")
+    label_qtd_frigorifico.place(x=555, y=190)
 
-    tk.Label(root, text="Fones", bg="white").place(x=50, y=260)
-    tk.Button(root, text="Adicionar", command=adicionar_fones).place(width=80, x=200, y=260)
-    tk.Button(root, text="Remover", command=remover_fones).place(width=80, x=300, y=260)
-    label_qtd_fones = tk.Label(root, text="0", bg="white")
-    label_qtd_fones.place(x=500, y=260)
+    tk.Label(root, text="Aspirador", bg="white").place(x=50, y=225)
+    tk.Label(root, text="Preço = " + str(preco_aspirador) + "€", bg="white").place(x=200, y=225)
+    tk.Button(root, text="Adicionar", command=adicionar_aspirador).place(width=80, x=300, y=225)
+    tk.Button(root, text="Remover", command=remover_aspirador).place(width=80, x=400, y=225)
+    label_qtd_aspirador = tk.Label(root, text="0", bg="white")
+    label_qtd_aspirador.place(x=555, y=225)
 
-    tk.Label(root, text="Rato", bg="white").place(x=50, y=310)
-    tk.Button(root, text="Adicionar", command=adicionar_rato).place(width=80, x=200, y=310)
-    tk.Button(root, text="Remover", command=remover_rato).place(width=80, x=300, y=310)
-    label_qtd_rato = tk.Label(root, text="0", bg="white")
-    label_qtd_rato.place(x=500, y=310)
+    tk.Label(root, text="Gaming", bg=branco, font=("Arial", 14)).place(x=50, y=270)
+
+    tk.Label(root, text="PC Gaming", bg="white").place(x=50, y=305)
+    tk.Label(root, text="Preço = " + str(preco_pc_gaming) + "€", bg="white").place(x=200, y=305)
+    tk.Button(root, text="Adicionar", command=adicionar_pc_gaming).place(width=80, x=300, y=305)
+    tk.Button(root, text="Remover", command=remover_pc_gaming).place(width=80, x=400, y=305)
+    label_qtd_pc_gaming = tk.Label(root, text="0", bg="white")
+    label_qtd_pc_gaming.place(x=555, y=305)
+
+    tk.Label(root, text="Headset", bg="white").place(x=50, y=340)
+    tk.Label(root, text="Preço = " + str(preco_headset) + "€", bg="white").place(x=200, y=340)
+    tk.Button(root, text="Adicionar", command=adicionar_headset).place(width=80, x=300, y=340)
+    tk.Button(root, text="Remover", command=remover_headset).place(width=80, x=400, y=340)
+    label_qtd_headset = tk.Label(root, text="0", bg="white")
+    label_qtd_headset.place(x=555, y=340)
+
+    tk.Label(root, text="Rato Gaming", bg="white").place(x=50, y=375)
+    tk.Label(root, text="Preço = " + str(preco_rato_gaming) + "€", bg="white").place(x=200, y=375)
+    tk.Button(root, text="Adicionar", command=adicionar_rato_gaming).place(width=80, x=300, y=375)
+    tk.Button(root, text="Remover", command=remover_rato_gaming).place(width=80, x=400, y=375)
+    label_qtd_rato_gaming = tk.Label(root, text="0", bg="white")
+    label_qtd_rato_gaming.place(x=555, y=375)
+
+    tk.Label(root, text="Telemóveis", bg=branco, font=("Arial", 14)).place(x=50, y=420)
+
+    tk.Label(root, text="Telemóvel", bg="white").place(x=50, y=455)
+    tk.Label(root, text="Preço = " + str(preco_telemovel) + "€", bg="white").place(x=200, y=455)
+    tk.Button(root, text="Adicionar", command=adicionar_telemovel).place(width=80, x=300, y=455)
+    tk.Button(root, text="Remover", command=remover_telemovel).place(width=80, x=400, y=455)
+    label_qtd_telemovel = tk.Label(root, text="0", bg="white")
+    label_qtd_telemovel.place(x=555, y=455)
+
+    tk.Label(root, text="Powerbank", bg="white").place(x=50, y=490)
+    tk.Label(root, text="Preço = " + str(preco_powerbank) + "€", bg="white").place(x=200, y=490)
+    tk.Button(root, text="Adicionar", command=adicionar_powerbank).place(width=80, x=300, y=490)
+    tk.Button(root, text="Remover", command=remover_powerbank).place(width=80, x=400, y=490)
+    label_qtd_powerbank = tk.Label(root, text="0", bg="white")
+    label_qtd_powerbank.place(x=555, y=490)
+
+    tk.Label(root, text="Carregador", bg="white").place(x=50, y=525)
+    tk.Label(root, text="Preço = " + str(preco_carregador) + "€", bg="white").place(x=200, y=525)
+    tk.Button(root, text="Adicionar", command=adicionar_carregador).place(width=80, x=300, y=525)
+    tk.Button(root, text="Remover", command=remover_carregador).place(width=80, x=400, y=525)
+    label_qtd_carregador = tk.Label(root, text="0", bg="white")
+    label_qtd_carregador.place(x=555, y=525)
 
     label_carrinho = tk.Label(root, text="Carrinho: 0 produtos", bg="white")
-    label_carrinho.place(x=50, y=380)
+    label_carrinho.place(x=50, y=590)
 
-    tk.Button(root, text="Pagar", command=pagar).place(width=150, x=225, y=430)
-    tk.Button(root, text="Apagar carrinho", command=apagar_carrinho).place(width=150, x=225, y=470)
-    tk.Button(root, text="Sair da conta", command=sair_conta).place(width=150, x=225, y=510)
+    tk.Button(root, text="Proceder ao pagamento", command=pagar).place(width=180, x=220, y=585)
 
-    atualizar_quantidades()
     atualizar_carrinho()
 
 
 root = tk.Tk()
 root.title("Loja do Zé")
-root.geometry("600x600")
+root.geometry("650x680")
 
-branco = "#ddf6f9"
+branco = "#ff0000"
 root.configure(bg=branco)
 
 mostrar_menu()

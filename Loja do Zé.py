@@ -101,7 +101,52 @@ def iniciar_sessao():
                 messagebox.showerror("Erro", "Username ou password incorretos.")
 
         except FileNotFoundError:
-            messagebox.showerror("Erro", "Ainda não existe nenhuma conta criada.")
+            messagebox.showerror("Erro", "Essa conta ainda não foi criada.")
+
+
+def sair():
+    global qtd_microondas, qtd_frigorifico, qtd_aspirador
+    global qtd_pc_gaming, qtd_headset, qtd_rato_gaming
+    global qtd_telemovel, qtd_powerbank, qtd_carregador
+    global username_atual
+
+    qtd_microondas = 0
+    qtd_frigorifico = 0
+    qtd_aspirador = 0
+    qtd_pc_gaming = 0
+    qtd_headset = 0
+    qtd_rato_gaming = 0
+    qtd_telemovel = 0
+    qtd_powerbank = 0
+    qtd_carregador = 0
+    username_atual = ""
+
+    mostrar_menu()
+
+
+def limpar_carrinho():
+    global qtd_microondas, qtd_frigorifico, qtd_aspirador
+    global qtd_pc_gaming, qtd_headset, qtd_rato_gaming
+    global qtd_telemovel, qtd_powerbank, qtd_carregador
+
+    total_atual = qtd_microondas + qtd_frigorifico + qtd_aspirador
+    total_atual = total_atual + qtd_pc_gaming + qtd_headset + qtd_rato_gaming
+    total_atual = total_atual + qtd_telemovel + qtd_powerbank + qtd_carregador
+
+    if total_atual == 0:
+        messagebox.showerror("Erro", "O carrinho está vazio.")
+    else:
+        qtd_microondas = 0
+        qtd_frigorifico = 0
+        qtd_aspirador = 0
+        qtd_pc_gaming = 0
+        qtd_headset = 0
+        qtd_rato_gaming = 0
+        qtd_telemovel = 0
+        qtd_powerbank = 0
+        qtd_carregador = 0
+
+        atualizar_carrinho()
 
 
 def atualizar_carrinho():
@@ -113,6 +158,7 @@ def atualizar_carrinho():
 
     label_qtd_microondas.config(text=str(qtd_microondas))
     label_qtd_frigorifico.config(text=str(qtd_frigorifico))
+    label_qtd_aspirador.config(text=str(qtd_frigorifico))
     label_qtd_aspirador.config(text=str(qtd_aspirador))
 
     label_qtd_pc_gaming.config(text=str(qtd_pc_gaming))
@@ -246,6 +292,10 @@ def confirmar_pagamento():
 
     if nif == "":
         messagebox.showerror("Erro", "Tens de colocar o número de contribuinte.")
+    elif nif.isdigit() == False:
+        messagebox.showerror("Erro", "O número de contribuinte só pode ter números.")
+    elif len(nif) != 9:
+        messagebox.showerror("Erro", "O número de contribuinte tem de ter exatamente 9 dígitos.")
     else:
         messagebox.showinfo("Pagamento", "Pagamento confirmado.\nNúmero de contribuinte: " + nif)
         janela_pagamento.destroy()
@@ -273,18 +323,20 @@ def pagar():
     else:
         janela_pagamento = tk.Toplevel(root)
         janela_pagamento.title("Pagamento")
-        janela_pagamento.geometry("350x270")
-        janela_pagamento.configure(bg=branco)
+        janela_pagamento.geometry("350x300")
+        janela_pagamento.configure(bg=fundo)
 
-        tk.Label(janela_pagamento, text="Total de produtos: " + str(total_produtos), bg="white").place(x=50, y=50)
-        tk.Label(janela_pagamento, text="Preço total = " + str(total_preco) + "€", bg="white").place(x=50, y=90)
+        tk.Label(janela_pagamento, text="Pagamento", bg=banner, fg=texto_claro, font=("Arial", 16)).place(x=0, y=0, width=360, height=45)
 
-        tk.Label(janela_pagamento, text="Número de contribuinte:", bg="white").place(x=50, y=130)
+        tk.Label(janela_pagamento, text="Total de produtos: " + str(total_produtos), bg=fundo, fg=texto_preto).place(x=50, y=65)
+        tk.Label(janela_pagamento, text="Preço total = " + str(total_preco) + "€", bg=fundo, fg=banner, font=("Arial", 10, "bold")).place(x=50, y=100)
 
-        entry_nif = tk.Entry(janela_pagamento)
-        entry_nif.place(width=160, x=50, y=160)
+        tk.Label(janela_pagamento, text="Número de contribuinte:", bg=fundo, fg=texto_preto).place(x=50, y=145)
 
-        tk.Button(janela_pagamento, text="Confirmar", command=confirmar_pagamento).place(width=120, x=110, y=210)
+        entry_nif = tk.Entry(janela_pagamento, relief="solid", bd=1)
+        entry_nif.place(width=160, x=50, y=170)
+
+        tk.Button(janela_pagamento, text="Confirmar", command=confirmar_pagamento, bg=btn_pagar, fg=texto_claro, relief="flat").place(width=120, x=110, y=230)
 
 
 def mostrar_menu():
@@ -292,18 +344,20 @@ def mostrar_menu():
 
     limpar_janela()
 
-    tk.Label(root, text="Loja do Zé", bg=branco, font=("Arial", 28)).place(x=210, y=50)
+    tk.Label(root, text="Loja do Zé", bg=banner, fg=texto_claro, font=("Arial", 28), anchor="center").place(x=0, y=0, width=660, height=60)
 
-    tk.Label(root, text="Username", bg="white").place(x=180, y=150)
-    entry_username = tk.Entry(root)
-    entry_username.place(width=180, x=290, y=150)
+    tk.Label(root, bg=painel_login).place(x=130, y=110, width=390, height=200)
 
-    tk.Label(root, text="Password", bg="white").place(x=180, y=200)
-    entry_password = tk.Entry(root, show="*")
-    entry_password.place(width=180, x=290, y=200)
+    tk.Label(root, text="Username", bg=painel_login, fg=texto_preto).place(x=165, y=150)
+    entry_username = tk.Entry(root, relief="solid", bd=1)
+    entry_username.place(width=180, x=255, y=150)
 
-    tk.Button(root, text="Iniciar sessão", command=iniciar_sessao).place(width=130, x=190, y=270)
-    tk.Button(root, text="Criar conta", command=criar_conta).place(width=130, x=340, y=270)
+    tk.Label(root, text="Password", bg=painel_login, fg=texto_preto).place(x=165, y=195)
+    entry_password = tk.Entry(root, show="*", relief="solid", bd=1)
+    entry_password.place(width=180, x=255, y=195)
+
+    tk.Button(root, text="Iniciar sessão", command=iniciar_sessao, bg=banner, fg=texto_claro, relief="flat").place(width=130, x=175, y=260)
+    tk.Button(root, text="Criar conta", command=criar_conta, bg=banner, fg=texto_claro, relief="flat").place(width=130, x=315, y=260)
 
 
 def mostrar_loja():
@@ -314,96 +368,134 @@ def mostrar_loja():
 
     limpar_janela()
 
-    tk.Label(root, text="Loja do Zé", bg=branco, font=("Arial", 28)).place(x=210, y=10)
-    tk.Label(root, text="Conta: " + username_atual, bg="white").place(x=50, y=55)
+    tk.Label(root, text="Loja do Zé", bg=banner, fg=texto_claro, font=("Arial", 28), anchor="center").place(x=0, y=0, width=660, height=60)
 
-    tk.Label(root, text="Produto", bg="white").place(x=50, y=85)
-    tk.Label(root, text="Preço", bg="white").place(x=200, y=85)
-    tk.Label(root, text="No carrinho", bg="white").place(x=520, y=85)
+    tk.Label(root, text="Conta: " + username_atual, bg=fundo, fg=cinzento_medio).place(x=50, y=68)
 
-    tk.Label(root, text="Eletrodomésticos", bg=branco, font=("Arial", 14)).place(x=50, y=120)
+    tk.Button(root, text="Sair", command=sair, bg=btn_remover, fg=texto_claro, relief="flat").place(width=60, height=25, x=560, y=68)
 
-    tk.Label(root, text="Microondas", bg="white").place(x=50, y=155)
-    tk.Label(root, text="Preço = " + str(preco_microondas) + "€", bg="white").place(x=200, y=155)
-    tk.Button(root, text="Adicionar", command=adicionar_microondas).place(width=80, x=300, y=155)
-    tk.Button(root, text="Remover", command=remover_microondas).place(width=80, x=400, y=155)
-    label_qtd_microondas = tk.Label(root, text="0", bg="white")
-    label_qtd_microondas.place(x=555, y=155)
+    tk.Label(root, text="Produto", bg=fundo, fg=cinzento_escuro, font=("Arial", 9, "bold")).place(x=50, y=95)
+    tk.Label(root, text="Preço", bg=fundo, fg=cinzento_escuro, font=("Arial", 9, "bold")).place(x=200, y=95)
+    tk.Label(root, text="No carrinho", bg=fundo, fg=cinzento_escuro, font=("Arial", 9, "bold")).place(x=490, y=95)
 
-    tk.Label(root, text="Frigorífico", bg="white").place(x=50, y=190)
-    tk.Label(root, text="Preço = " + str(preco_frigorifico) + "€", bg="white").place(x=200, y=190)
-    tk.Button(root, text="Adicionar", command=adicionar_frigorifico).place(width=80, x=300, y=190)
-    tk.Button(root, text="Remover", command=remover_frigorifico).place(width=80, x=400, y=190)
-    label_qtd_frigorifico = tk.Label(root, text="0", bg="white")
-    label_qtd_frigorifico.place(x=555, y=190)
+    tk.Frame(root, bg=separador).place(x=30, y=113, width=600, height=1)
 
-    tk.Label(root, text="Aspirador", bg="white").place(x=50, y=225)
-    tk.Label(root, text="Preço = " + str(preco_aspirador) + "€", bg="white").place(x=200, y=225)
-    tk.Button(root, text="Adicionar", command=adicionar_aspirador).place(width=80, x=300, y=225)
-    tk.Button(root, text="Remover", command=remover_aspirador).place(width=80, x=400, y=225)
-    label_qtd_aspirador = tk.Label(root, text="0", bg="white")
-    label_qtd_aspirador.place(x=555, y=225)
+    tk.Label(root, text="Eletrodomésticos", bg=fundo, fg=banner, font=("Arial", 11, "bold")).place(x=50, y=120)
 
-    tk.Label(root, text="Gaming", bg=branco, font=("Arial", 14)).place(x=50, y=270)
+    tk.Label(root, bg=fundo).place(x=30, y=140, width=600, height=25)
+    tk.Label(root, text="Microondas", bg=fundo, fg=texto_preto).place(x=50, y=143)
+    tk.Label(root, text="Preço = " + str(preco_microondas) + "€", bg=fundo, fg=banner).place(x=200, y=143)
+    tk.Button(root, text="Adicionar", command=adicionar_microondas, bg=banner, fg=texto_claro, relief="flat").place(width=80, x=300, y=141)
+    tk.Button(root, text="Remover", command=remover_microondas, bg=btn_remover, fg=texto_claro, relief="flat").place(width=80, x=390, y=141)
+    label_qtd_microondas = tk.Label(root, text="0", bg=cinzento_claro, fg=texto_preto, width=3)
+    label_qtd_microondas.place(x=490, y=143)
+    tk.Frame(root, bg=separador).place(x=30, y=165, width=600, height=1)
 
-    tk.Label(root, text="PC Gaming", bg="white").place(x=50, y=305)
-    tk.Label(root, text="Preço = " + str(preco_pc_gaming) + "€", bg="white").place(x=200, y=305)
-    tk.Button(root, text="Adicionar", command=adicionar_pc_gaming).place(width=80, x=300, y=305)
-    tk.Button(root, text="Remover", command=remover_pc_gaming).place(width=80, x=400, y=305)
-    label_qtd_pc_gaming = tk.Label(root, text="0", bg="white")
-    label_qtd_pc_gaming.place(x=555, y=305)
+    tk.Label(root, bg=zebra).place(x=30, y=166, width=600, height=25)
+    tk.Label(root, text="Frigorífico", bg=zebra, fg=texto_preto).place(x=50, y=169)
+    tk.Label(root, text="Preço = " + str(preco_frigorifico) + "€", bg=zebra, fg=banner).place(x=200, y=169)
+    tk.Button(root, text="Adicionar", command=adicionar_frigorifico, bg=banner, fg=texto_claro, relief="flat").place(width=80, x=300, y=167)
+    tk.Button(root, text="Remover", command=remover_frigorifico, bg=btn_remover, fg=texto_claro, relief="flat").place(width=80, x=390, y=167)
+    label_qtd_frigorifico = tk.Label(root, text="0", bg=cinzento_claro, fg=texto_preto, width=3)
+    label_qtd_frigorifico.place(x=490, y=169)
+    tk.Frame(root, bg=separador).place(x=30, y=191, width=600, height=1)
 
-    tk.Label(root, text="Headset", bg="white").place(x=50, y=340)
-    tk.Label(root, text="Preço = " + str(preco_headset) + "€", bg="white").place(x=200, y=340)
-    tk.Button(root, text="Adicionar", command=adicionar_headset).place(width=80, x=300, y=340)
-    tk.Button(root, text="Remover", command=remover_headset).place(width=80, x=400, y=340)
-    label_qtd_headset = tk.Label(root, text="0", bg="white")
-    label_qtd_headset.place(x=555, y=340)
+    tk.Label(root, bg=fundo).place(x=30, y=192, width=600, height=25)
+    tk.Label(root, text="Aspirador", bg=fundo, fg=texto_preto).place(x=50, y=195)
+    tk.Label(root, text="Preço = " + str(preco_aspirador) + "€", bg=fundo, fg=banner).place(x=200, y=195)
+    tk.Button(root, text="Adicionar", command=adicionar_aspirador, bg=banner, fg=texto_claro, relief="flat").place(width=80, x=300, y=193)
+    tk.Button(root, text="Remover", command=remover_aspirador, bg=btn_remover, fg=texto_claro, relief="flat").place(width=80, x=390, y=193)
+    label_qtd_aspirador = tk.Label(root, text="0", bg=cinzento_claro, fg=texto_preto, width=3)
+    label_qtd_aspirador.place(x=490, y=195)
+    tk.Frame(root, bg=separador).place(x=30, y=217, width=600, height=1)
 
-    tk.Label(root, text="Rato Gaming", bg="white").place(x=50, y=375)
-    tk.Label(root, text="Preço = " + str(preco_rato_gaming) + "€", bg="white").place(x=200, y=375)
-    tk.Button(root, text="Adicionar", command=adicionar_rato_gaming).place(width=80, x=300, y=375)
-    tk.Button(root, text="Remover", command=remover_rato_gaming).place(width=80, x=400, y=375)
-    label_qtd_rato_gaming = tk.Label(root, text="0", bg="white")
-    label_qtd_rato_gaming.place(x=555, y=375)
+    tk.Label(root, text="Gaming", bg=fundo, fg=banner, font=("Arial", 11, "bold")).place(x=50, y=224)
 
-    tk.Label(root, text="Telemóveis", bg=branco, font=("Arial", 14)).place(x=50, y=420)
+    tk.Label(root, bg=zebra).place(x=30, y=244, width=600, height=25)
+    tk.Label(root, text="PC Gaming", bg=zebra, fg=texto_preto).place(x=50, y=247)
+    tk.Label(root, text="Preço = " + str(preco_pc_gaming) + "€", bg=zebra, fg=banner).place(x=200, y=247)
+    tk.Button(root, text="Adicionar", command=adicionar_pc_gaming, bg=banner, fg=texto_claro, relief="flat").place(width=80, x=300, y=245)
+    tk.Button(root, text="Remover", command=remover_pc_gaming, bg=btn_remover, fg=texto_claro, relief="flat").place(width=80, x=390, y=245)
+    label_qtd_pc_gaming = tk.Label(root, text="0", bg=cinzento_claro, fg=texto_preto, width=3)
+    label_qtd_pc_gaming.place(x=490, y=247)
+    tk.Frame(root, bg=separador).place(x=30, y=269, width=600, height=1)
 
-    tk.Label(root, text="Telemóvel", bg="white").place(x=50, y=455)
-    tk.Label(root, text="Preço = " + str(preco_telemovel) + "€", bg="white").place(x=200, y=455)
-    tk.Button(root, text="Adicionar", command=adicionar_telemovel).place(width=80, x=300, y=455)
-    tk.Button(root, text="Remover", command=remover_telemovel).place(width=80, x=400, y=455)
-    label_qtd_telemovel = tk.Label(root, text="0", bg="white")
-    label_qtd_telemovel.place(x=555, y=455)
+    tk.Label(root, bg=fundo).place(x=30, y=270, width=600, height=25)
+    tk.Label(root, text="Headset", bg=fundo, fg=texto_preto).place(x=50, y=273)
+    tk.Label(root, text="Preço = " + str(preco_headset) + "€", bg=fundo, fg=banner).place(x=200, y=273)
+    tk.Button(root, text="Adicionar", command=adicionar_headset, bg=banner, fg=texto_claro, relief="flat").place(width=80, x=300, y=271)
+    tk.Button(root, text="Remover", command=remover_headset, bg=btn_remover, fg=texto_claro, relief="flat").place(width=80, x=390, y=271)
+    label_qtd_headset = tk.Label(root, text="0", bg=cinzento_claro, fg=texto_preto, width=3)
+    label_qtd_headset.place(x=490, y=273)
+    tk.Frame(root, bg=separador).place(x=30, y=295, width=600, height=1)
 
-    tk.Label(root, text="Powerbank", bg="white").place(x=50, y=490)
-    tk.Label(root, text="Preço = " + str(preco_powerbank) + "€", bg="white").place(x=200, y=490)
-    tk.Button(root, text="Adicionar", command=adicionar_powerbank).place(width=80, x=300, y=490)
-    tk.Button(root, text="Remover", command=remover_powerbank).place(width=80, x=400, y=490)
-    label_qtd_powerbank = tk.Label(root, text="0", bg="white")
-    label_qtd_powerbank.place(x=555, y=490)
+    tk.Label(root, bg=zebra).place(x=30, y=296, width=600, height=25)
+    tk.Label(root, text="Rato Gaming", bg=zebra, fg=texto_preto).place(x=50, y=299)
+    tk.Label(root, text="Preço = " + str(preco_rato_gaming) + "€", bg=zebra, fg=banner).place(x=200, y=299)
+    tk.Button(root, text="Adicionar", command=adicionar_rato_gaming, bg=banner, fg=texto_claro, relief="flat").place(width=80, x=300, y=297)
+    tk.Button(root, text="Remover", command=remover_rato_gaming, bg=btn_remover, fg=texto_claro, relief="flat").place(width=80, x=390, y=297)
+    label_qtd_rato_gaming = tk.Label(root, text="0", bg=cinzento_claro, fg=texto_preto, width=3)
+    label_qtd_rato_gaming.place(x=490, y=299)
+    tk.Frame(root, bg=separador).place(x=30, y=321, width=600, height=1)
 
-    tk.Label(root, text="Carregador", bg="white").place(x=50, y=525)
-    tk.Label(root, text="Preço = " + str(preco_carregador) + "€", bg="white").place(x=200, y=525)
-    tk.Button(root, text="Adicionar", command=adicionar_carregador).place(width=80, x=300, y=525)
-    tk.Button(root, text="Remover", command=remover_carregador).place(width=80, x=400, y=525)
-    label_qtd_carregador = tk.Label(root, text="0", bg="white")
-    label_qtd_carregador.place(x=555, y=525)
+    tk.Label(root, text="Telemóveis", bg=fundo, fg=banner, font=("Arial", 11, "bold")).place(x=50, y=328)
 
-    label_carrinho = tk.Label(root, text="Carrinho: 0 produtos", bg="white")
-    label_carrinho.place(x=50, y=590)
+    tk.Label(root, bg=fundo).place(x=30, y=348, width=600, height=25)
+    tk.Label(root, text="Telemóvel", bg=fundo, fg=texto_preto).place(x=50, y=351)
+    tk.Label(root, text="Preço = " + str(preco_telemovel) + "€", bg=fundo, fg=banner).place(x=200, y=351)
+    tk.Button(root, text="Adicionar", command=adicionar_telemovel, bg=banner, fg=texto_claro, relief="flat").place(width=80, x=300, y=349)
+    tk.Button(root, text="Remover", command=remover_telemovel, bg=btn_remover, fg=texto_claro, relief="flat").place(width=80, x=390, y=349)
+    label_qtd_telemovel = tk.Label(root, text="0", bg=cinzento_claro, fg=texto_preto, width=3)
+    label_qtd_telemovel.place(x=490, y=351)
+    tk.Frame(root, bg=separador).place(x=30, y=373, width=600, height=1)
 
-    tk.Button(root, text="Proceder ao pagamento", command=pagar).place(width=180, x=220, y=585)
+    tk.Label(root, bg=zebra).place(x=30, y=374, width=600, height=25)
+    tk.Label(root, text="Powerbank", bg=zebra, fg=texto_preto).place(x=50, y=377)
+    tk.Label(root, text="Preço = " + str(preco_powerbank) + "€", bg=zebra, fg=banner).place(x=200, y=377)
+    tk.Button(root, text="Adicionar", command=adicionar_powerbank, bg=banner, fg=texto_claro, relief="flat").place(width=80, x=300, y=375)
+    tk.Button(root, text="Remover", command=remover_powerbank, bg=btn_remover, fg=texto_claro, relief="flat").place(width=80, x=390, y=375)
+    label_qtd_powerbank = tk.Label(root, text="0", bg=cinzento_claro, fg=texto_preto, width=3)
+    label_qtd_powerbank.place(x=490, y=377)
+    tk.Frame(root, bg=separador).place(x=30, y=399, width=600, height=1)
+
+    tk.Label(root, bg=fundo).place(x=30, y=400, width=600, height=25)
+    tk.Label(root, text="Carregador", bg=fundo, fg=texto_preto).place(x=50, y=403)
+    tk.Label(root, text="Preço = " + str(preco_carregador) + "€", bg=fundo, fg=banner).place(x=200, y=403)
+    tk.Button(root, text="Adicionar", command=adicionar_carregador, bg=banner, fg=texto_claro, relief="flat").place(width=80, x=300, y=401)
+    tk.Button(root, text="Remover", command=remover_carregador, bg=btn_remover, fg=texto_claro, relief="flat").place(width=80, x=390, y=401)
+    label_qtd_carregador = tk.Label(root, text="0", bg=cinzento_claro, fg=texto_preto, width=3)
+    label_qtd_carregador.place(x=490, y=403)
+    tk.Frame(root, bg=separador).place(x=30, y=425, width=600, height=1)
+
+    tk.Frame(root, bg=separador).place(x=30, y=450, width=600, height=2)
+
+    label_carrinho = tk.Label(root, text="Carrinho: 0 produtos", bg=fundo, fg=texto_preto, font=("Arial", 9, "bold"))
+    label_carrinho.place(x=50, y=465)
+
+    tk.Button(root, text="Limpar carrinho", command=limpar_carrinho, bg=btn_remover, fg=texto_claro, relief="flat").place(width=130, height=35, x=50, y=490)
+    tk.Button(root, text="Proceder ao pagamento", command=pagar, bg=btn_pagar, fg=texto_claro, relief="flat").place(width=200, height=35, x=390, y=490)
 
     atualizar_carrinho()
 
 
 root = tk.Tk()
 root.title("Loja do Zé")
-root.geometry("650x680")
+root.geometry("650x545")
 
-branco = "#ff0000"
-root.configure(bg=branco)
+fundo = "#ffffff"
+banner = "#cc0000"
+texto_claro = "#ffffff"
+texto_preto = "#1a1a1a"
+cinzento_escuro = "#444444"
+cinzento_medio = "#666666"
+cinzento_claro = "#e8e8e8"
+painel_login = "#f2f2f2"
+zebra = "#f7f7f7"
+separador = "#e0e0e0"
+btn_remover = "#333333"
+btn_pagar = "#ff6600"
+
+root.configure(bg=fundo)
 
 mostrar_menu()
 

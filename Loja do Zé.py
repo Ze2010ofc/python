@@ -1,17 +1,18 @@
 import tkinter as tk
 from tkinter import messagebox
+import random
 
-preco_microondas = 80
-preco_frigorifico = 300
-preco_aspirador = 90
+preco_microondas = random.randint(40, 80)
+preco_frigorifico = random.randint(300, 450)
+preco_aspirador = random.randint(75, 100)
 
-preco_pc_gaming = 900
-preco_headset = 35
-preco_rato_gaming = 25
+preco_pc_gaming = random.randint(900, 1500)
+preco_headset = random.randint(30, 50)
+preco_rato_gaming = random.randint(40, 60)
 
-preco_telemovel = 200
-preco_powerbank = 20
-preco_carregador = 15
+preco_telemovel = random.randint(200, 500)
+preco_powerbank = random.randint(15, 30)
+preco_carregador = random.randint(10, 20)
 
 qtd_microondas = 0
 qtd_frigorifico = 0

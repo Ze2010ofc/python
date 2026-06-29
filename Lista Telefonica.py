@@ -16,7 +16,7 @@ def adicionar():
     with open('agenda.txt', 'a') as arquivo:
         arquivo.write(f"{nome};{tel};{end};{dist};{pais};{email}\n")
 
-    messagebox.showinfo('Agenda','Cadastro efetuado com sucesso!')
+    messagebox.showinfo('Lista telefónica','Cadastro efetuado com sucesso!')
 
     input_Nome.delete(0, 'end')
     input_Telefone.delete(0, 'end')
@@ -72,7 +72,7 @@ def eliminar():
 
 
 root = tk.Tk()
-root.title("Agenda")
+root.title("Lista Telefónica")
 root.geometry("600x600")
 
 branco = "#ddf6f9"
